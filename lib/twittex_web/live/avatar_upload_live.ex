@@ -18,6 +18,18 @@ defmodule TwittexWeb.AvatarUploadLive do
     {:noreply, socket}
   end
 
+  def handle_event("save", _params, socket) do
+    [avatar] =
+      consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
+        dest = Path.join([:code.priv_dir(:twittex), "static", "uploads", Path.basename(path)])
+        File.cp!(path, dest)
+        {:ok, ~p"/uploads/#{Path.basename(dest)}"}
+      end)
+
+    Accounts.save_user_avatar!(socket.assigns.current_user, Path.basename(avatar))
+    {:noreply, socket}
+  end
+
   def upload_error(%{code: :too_large} = assigns) do
     ~H"""
     <.error>File too large. Max size is 2MB</.error>
@@ -33,16 +45,4 @@ defmodule TwittexWeb.AvatarUploadLive do
   end
 
   defp allowed_types, do: @allowed_types
-
-  def handle_event("save", _params, socket) do
-    [avatar] =
-      consume_uploaded_entries(socket, :avatar, fn %{path: path}, _entry ->
-        dest = Path.join([:code.priv_dir(:twittex), "static", "uploads", Path.basename(path)])
-        File.cp!(path, dest)
-        {:ok, ~p"/uploads/#{Path.basename(dest)}"}
-      end)
-
-    Accounts.save_user_avatar!(socket.assigns.current_user, Path.basename(avatar))
-    {:noreply, socket}
-  end
 end
