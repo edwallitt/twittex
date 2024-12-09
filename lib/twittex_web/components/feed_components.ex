@@ -3,6 +3,8 @@ defmodule TwittexWeb.FeedComponents do
 
   alias Twittex.Feed.Tweek
 
+  import TwittexWeb.AvatarHelper
+
   attr :tweek, Tweek
 
   def tweek_in_feed(assigns) do

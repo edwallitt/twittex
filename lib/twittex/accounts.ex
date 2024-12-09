@@ -30,6 +30,12 @@ defmodule Twittex.Accounts do
     Repo.get_by!(User, username: username)
   end
 
+  def save_user_avatar!(user, avatar) do
+    user
+    |> User.avatar_changeset(avatar)
+    |> Repo.update!()
+  end
+
   @doc """
   Gets a user by email and password.
 
