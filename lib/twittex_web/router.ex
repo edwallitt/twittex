@@ -20,7 +20,7 @@ defmodule TwittexWeb.Router do
   scope "/", TwittexWeb do
     pipe_through :browser
 
-    get "/", PageController, :home
+    live "/", FeedLive
     live "/:username", ProfileLive
   end
 
